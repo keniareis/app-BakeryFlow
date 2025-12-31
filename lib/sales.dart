@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../widgets/new_sale_modal.dart';
 
 class Sales extends StatefulWidget {
   const Sales({super.key});
@@ -154,7 +155,14 @@ class _SalesState extends State<Sales> {
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         ),
-        onPressed: () {},
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) => const NewSaleModal(),
+          );
+        },
         icon: const Icon(Icons.add),
         label: const Text('Nova venda', style: TextStyle(fontSize: 18, color: Colors.white)),
       ),
