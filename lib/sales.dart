@@ -1,0 +1,236 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+class Sales extends StatefulWidget {
+  const Sales({super.key});
+
+  @override
+  State<Sales> createState() => _SalesState();
+}
+
+class _SalesState extends State<Sales> {
+  String filtroSelecionado = 'Dia';
+
+  @override
+  Widget build(BuildContext context) {
+    // REMOVIDO o Scaffold daqui para não dar conflito com a MainPage
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            _dateHeader(),
+            const SizedBox(height: 16),
+            _balanceCard(),
+            const SizedBox(height: 16),
+            _tableHeader(),
+            const SizedBox(height: 8),
+            Expanded(child: _salesList()),
+            const SizedBox(height: 12),
+            _bottomFilter(),
+            const SizedBox(height: 12),
+            _newSaleButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Seus Widgets auxiliares (_dateHeader, _balanceCard, etc) continuam aqui...
+  // (Mantive a lógica que você já tinha, apenas organizei a estrutura)
+
+  Widget _dateHeader() {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Icon(Icons.chevron_left),
+        Text('16 NOV', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+        Icon(Icons.chevron_right),
+      ],
+    );
+  }
+
+  Widget _balanceCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF7E8),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: [
+          const Text('Saldo atual', style: TextStyle(fontWeight: FontWeight.w500)),
+          const SizedBox(height: 8),
+          const Text('R\$ 9.999,00',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFF6B3E16))),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            value: 'Todos',
+            isExpanded: true,
+            items: const [
+              DropdownMenuItem(value: 'Todos', child: Text('Todos')),
+              DropdownMenuItem(value: 'Pix', child: Text('Pix')),
+              DropdownMenuItem(value: 'Dinheiro', child: Text('Dinheiro')),
+            ],
+            onChanged: (value) {},
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: const Color(0xFFE8D9B5),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _tableHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      decoration: BoxDecoration(color: const Color(0xFF6B3E16), borderRadius: BorderRadius.circular(12)),
+      child: const Row(
+        children: [
+          Expanded(flex: 2, child: Text('Nome', style: TextStyle(color: Colors.white))),
+          Expanded(flex: 2, child: Text('Pagamento', textAlign: TextAlign.center, style: TextStyle(color: Colors.white))),
+          Expanded(flex: 2, child: Text('Valor', textAlign: TextAlign.end, style: TextStyle(color: Colors.white))),
+        ],
+      ),
+    );
+  }
+
+  Widget _salesList() {
+    return ListView(
+      children: const [
+        SaleTile(nome: 'Ana', pagamento: 'Pix', valor: '18,00'),
+        SaleTile(nome: 'Beto', pagamento: 'Dinheiro', valor: '25,00'),
+      ],
+    );
+  }
+  
+  Widget _bottomFilter() {
+    return Container(
+      padding: const EdgeInsets.all(6),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF3DC),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          _filterItem(
+            label: 'Dia',
+            selected: filtroSelecionado == 'Dia',
+            onTap: () {
+              setState(() => filtroSelecionado = 'Dia');
+            },
+          ),
+          _filterItem(
+            label: 'Mês',
+            selected: filtroSelecionado == 'Mês',
+            onTap: () {
+              setState(() => filtroSelecionado = 'Mês');
+            },
+          ),
+          _filterItem(
+            label: 'Ano',
+            selected: filtroSelecionado == 'Ano',
+            onTap: () {
+              setState(() => filtroSelecionado = 'Ano');
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
+  Widget _newSaleButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF6B3E16),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+        ),
+        onPressed: () {},
+        icon: const Icon(Icons.add),
+        label: const Text('Nova venda', style: TextStyle(fontSize: 18, color: Colors.white)),
+      ),
+    );
+  }
+}
+
+class SaleTile extends StatelessWidget {
+  final String nome;
+  final String pagamento;
+  final String valor;
+
+  const SaleTile({super.key, required this.nome, required this.pagamento, required this.valor});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      color: const Color(0xFFFFF7E8),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          children: [
+            Expanded(flex: 2, child: Text(nome, style: const TextStyle(fontWeight: FontWeight.w500))),
+            Expanded(
+              flex: 2,
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                decoration: BoxDecoration(color: const Color(0xFFE8D9B5), borderRadius: BorderRadius.circular(12)),
+                child: Text(pagamento, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12)),
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text('R\$ $valor', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(width: 8),
+                  const Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+Widget _filterItem({
+  required String label,
+  required bool selected,
+  required VoidCallback onTap,
+}) {
+  return Expanded(
+    child: GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: selected ? const Color(0xFF6B3E16) : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: selected ? Colors.white : const Color(0xFF6B3E16),
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
