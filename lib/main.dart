@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:sabor_de_casa/sales.dart';
+import 'package:sabor_de_casa/pages/sales.dart';
 // import 'pages/expenses_page.dart';
 
 void main() {

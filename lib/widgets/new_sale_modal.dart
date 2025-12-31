@@ -1,116 +1,162 @@
 import 'package:flutter/material.dart';
+import '../models/sale_model.dart';
 
-class NewSaleModal extends StatelessWidget {
-  const NewSaleModal({super.key});
+class NewSaleModal extends StatefulWidget {
+  final DateTime data;
+
+  const NewSaleModal({
+    super.key,
+    required this.data,
+  });
+
+  @override
+  State<NewSaleModal> createState() => _NewSaleModalState();
+}
+
+class _NewSaleModalState extends State<NewSaleModal> {
+  final _nomeController = TextEditingController();
+  final _valorController = TextEditingController();
+
+  String pagamentoSelecionado = 'Pix';
+
+  @override
+  void dispose() {
+    _nomeController.dispose();
+    _valorController.dispose();
+    super.dispose();
+  }
+
+  void _salvar() {
+    final nome = _nomeController.text.trim();
+    final valorTexto = _valorController.text.replaceAll(',', '.');
+
+    if (nome.isEmpty || valorTexto.isEmpty) return;
+
+    final valor = double.tryParse(valorTexto);
+    if (valor == null) return;
+
+    Navigator.pop(
+      context,
+      Sale(
+        nome: nome,
+        pagamento: pagamentoSelecionado,
+        valor: valor,
+        data: DateTime(
+          widget.data.year,
+          widget.data.month,
+          widget.data.day,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(
-          color: Color(0xFFFFF3DC),
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(24),
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: const BoxDecoration(
+            color: Color(0xFFFFF3DC),
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(24),
+            ),
           ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _handle(),
-            const SizedBox(height: 16),
-            _input('Nome'),
-            const SizedBox(height: 12),
-            _input('R\$ Valor', isNumber: true),
-            const SizedBox(height: 16),
-            _payment(),
-            const SizedBox(height: 20),
-            _save(context),
-          ],
-        ),
-      ),
-    );
-  }
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Nova venda',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF6B3E16),
+                ),
+              ),
+              const SizedBox(height: 20),
 
-  Widget _handle() {
-    return Container(
-      width: 40,
-      height: 4,
-      decoration: BoxDecoration(
-        color: Colors.brown.shade300,
-        borderRadius: BorderRadius.circular(10),
-      ),
-    );
-  }
+              _input(_nomeController, 'Nome'),
+              const SizedBox(height: 12),
 
-  Widget _input(String hint, {bool isNumber = false}) {
-    return TextField(
-      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-      textAlign: TextAlign.center,
-      decoration: InputDecoration(
-        hintText: hint,
-        filled: true,
-        fillColor: const Color(0xFFFFFBF2),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.brown.shade300),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.brown.shade300),
-        ),
-      ),
-    );
-  }
+              _input(
+                _valorController,
+                'Valor (R\$)',
+                isNumber: true,
+              ),
+              const SizedBox(height: 12),
 
-  Widget _payment() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text('Forma de pagamento'),
-        const SizedBox(width: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: const Color(0xFF6B3E16),
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: DropdownButton<String>(
-            value: 'Pix',
-            underline: const SizedBox(),
-            dropdownColor: const Color(0xFF6B3E16),
-            icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
-            style: const TextStyle(color: Colors.white),
-            items: const [
-              DropdownMenuItem(value: 'Pix', child: Text('Pix')),
-              DropdownMenuItem(value: 'Dinheiro', child: Text('Dinheiro')),
-              DropdownMenuItem(value: 'Débito', child: Text('Débito')),
+              _pagamento(),
+              const SizedBox(height: 20),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF6B3E16),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  onPressed: _salvar,
+                  child: const Text(
+                    'Salvar',
+                    style: TextStyle(fontSize: 18, color: Colors.white),
+                  ),
+                ),
+              ),
             ],
-            onChanged: (_) {},
           ),
         ),
-      ],
+      ),
     );
   }
 
-  Widget _save(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF6B3E16),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
+  Widget _input(
+    TextEditingController controller,
+    String label, {
+    bool isNumber = false,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType:
+          isNumber ? TextInputType.number : TextInputType.text,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: const Color(0xFFE8D9B5),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide.none,
         ),
-        onPressed: () => Navigator.pop(context),
-        child: const Text(
-          'Salvar',
-          style: TextStyle(color: Colors.white, fontSize: 18),
+      ),
+    );
+  }
+
+  Widget _pagamento() {
+    return DropdownButtonFormField<String>(
+      value: pagamentoSelecionado,
+      items: const [
+        DropdownMenuItem(value: 'Pix', child: Text('Pix')),
+        DropdownMenuItem(value: 'Dinheiro', child: Text('Dinheiro')),
+        DropdownMenuItem(value: 'Cartão', child: Text('Cartão')),
+      ],
+      onChanged: (value) {
+        if (value != null) {
+          setState(() => pagamentoSelecionado = value);
+        }
+      },
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: const Color(0xFFE8D9B5),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(20),
+          borderSide: BorderSide.none,
         ),
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sabor_de_casa/sales.dart';
+import 'package:sabor_de_casa/pages/sales.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});

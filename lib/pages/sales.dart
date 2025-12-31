@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../widgets/new_sale_modal.dart';
+import '../../widgets/new_sale_modal.dart';
+import '../models/sale_model.dart';
+import '../database/app_database.dart';
 
 class Sales extends StatefulWidget {
   const Sales({super.key});
@@ -11,6 +12,56 @@ class Sales extends StatefulWidget {
 
 class _SalesState extends State<Sales> {
   String filtroSelecionado = 'Dia';
+
+  final List<Sale> vendas = [];
+
+  double get saldoTotal => vendas.fold(0, (total, sale) => total + sale.valor);
+
+  DateTime dataSelecionada = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+  
+  String _formatarData(DateTime data) {
+    const meses = [
+      'JAN',
+      'FEV',
+      'MAR',
+      'ABR',
+      'MAI',
+      'JUN',
+      'JUL',
+      'AGO',
+      'SET',
+      'OUT',
+      'NOV',
+      'DEZ',
+    ];
+
+    return '${data.day.toString().padLeft(2, '0')} ${meses[data.month - 1]}';
+  }
+
+  DateTime get hoje {
+    final agora = DateTime.now();
+    return DateTime(agora.year, agora.month, agora.day);
+  }
+
+  Future<void> _loadSales() async {
+    final result = await AppDatabase.instance.getSalesByDay(dataSelecionada);
+
+    setState(() {
+      vendas
+        ..clear()
+        ..addAll(result);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSales();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,12 +92,35 @@ class _SalesState extends State<Sales> {
   // (Mantive a lógica que você já tinha, apenas organizei a estrutura)
 
   Widget _dateHeader() {
-    return const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Icon(Icons.chevron_left),
-        Text('16 NOV', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-        Icon(Icons.chevron_right),
+        IconButton(
+          icon: const Icon(Icons.chevron_left),
+          onPressed: () {
+            setState(() {
+              dataSelecionada =
+                  dataSelecionada.subtract(const Duration(days: 1));
+            });
+            _loadSales();
+          },
+        ),
+        Text(
+          _formatarData(dataSelecionada),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
+        IconButton(
+          icon: const Icon(Icons.chevron_right),
+          onPressed: dataSelecionada.isBefore(hoje)
+              ? () {
+                  setState(() {
+                    dataSelecionada =
+                        dataSelecionada.add(const Duration(days: 1)); 
+                  });
+                  _loadSales();
+                }
+              : null,
+        ),
       ],
     );
   }
@@ -60,10 +134,17 @@ class _SalesState extends State<Sales> {
       ),
       child: Column(
         children: [
-          const Text('Saldo atual', style: TextStyle(fontWeight: FontWeight.w500)),
+          const Text('Saldo atual',
+              style: TextStyle(fontWeight: FontWeight.w500)),
           const SizedBox(height: 8),
-          const Text('R\$ 9.999,00',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFF6B3E16))),
+          Text(
+            'R\$ ${saldoTotal.toStringAsFixed(2)}',
+            style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF6B3E16),
+            ),
+          ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
             value: 'Todos',
@@ -78,7 +159,9 @@ class _SalesState extends State<Sales> {
               filled: true,
               fillColor: const Color(0xFFE8D9B5),
               contentPadding: const EdgeInsets.symmetric(horizontal: 16),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide.none),
             ),
           ),
         ],
@@ -89,26 +172,53 @@ class _SalesState extends State<Sales> {
   Widget _tableHeader() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      decoration: BoxDecoration(color: const Color(0xFF6B3E16), borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(
+          color: const Color(0xFF6B3E16),
+          borderRadius: BorderRadius.circular(12)),
       child: const Row(
         children: [
-          Expanded(flex: 2, child: Text('Nome', style: TextStyle(color: Colors.white))),
-          Expanded(flex: 2, child: Text('Pagamento', textAlign: TextAlign.center, style: TextStyle(color: Colors.white))),
-          Expanded(flex: 2, child: Text('Valor', textAlign: TextAlign.end, style: TextStyle(color: Colors.white))),
+          Expanded(
+              flex: 2,
+              child: Text('Nome', style: TextStyle(color: Colors.white))),
+          Expanded(
+              flex: 2,
+              child: Text('Pagamento',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.white))),
+          Expanded(
+              flex: 2,
+              child: Text('Valor',
+                  textAlign: TextAlign.end,
+                  style: TextStyle(color: Colors.white))),
         ],
       ),
     );
   }
 
   Widget _salesList() {
-    return ListView(
-      children: const [
-        SaleTile(nome: 'Ana', pagamento: 'Pix', valor: '18,00'),
-        SaleTile(nome: 'Beto', pagamento: 'Dinheiro', valor: '25,00'),
-      ],
+    if (vendas.isEmpty) {
+      return Center(
+        child: Text(
+          dataSelecionada == hoje
+              ? 'Nenhuma venda registrada hoje'
+              : 'Nenhuma venda registrada neste dia',
+        ),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: vendas.length,
+      itemBuilder: (context, index) {
+        final sale = vendas[index];
+        return SaleTile(
+          nome: sale.nome,
+          pagamento: sale.pagamento,
+          valor: sale.valor.toStringAsFixed(2),
+        );
+      },
     );
   }
-  
+
   Widget _bottomFilter() {
     return Container(
       padding: const EdgeInsets.all(6),
@@ -144,8 +254,6 @@ class _SalesState extends State<Sales> {
     );
   }
 
-
-
   Widget _newSaleButton() {
     return SizedBox(
       width: double.infinity,
@@ -153,18 +261,27 @@ class _SalesState extends State<Sales> {
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFF6B3E16),
           padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         ),
-        onPressed: () {
-          showModalBottomSheet(
+        onPressed: () async {
+          final sale = await showModalBottomSheet<Sale>(
             context: context,
             isScrollControlled: true,
             backgroundColor: Colors.transparent,
-            builder: (_) => const NewSaleModal(),
+            builder: (_) => NewSaleModal(
+              data: dataSelecionada,
+            ),
           );
+
+          if (sale != null) {
+            await AppDatabase.instance.insertSale(sale);
+            _loadSales();
+          }
         },
         icon: const Icon(Icons.add),
-        label: const Text('Nova venda', style: TextStyle(fontSize: 18, color: Colors.white)),
+        label: const Text('Nova venda',
+            style: TextStyle(fontSize: 18, color: Colors.white)),
       ),
     );
   }
@@ -175,7 +292,11 @@ class SaleTile extends StatelessWidget {
   final String pagamento;
   final String valor;
 
-  const SaleTile({super.key, required this.nome, required this.pagamento, required this.valor});
+  const SaleTile(
+      {super.key,
+      required this.nome,
+      required this.pagamento,
+      required this.valor});
 
   @override
   Widget build(BuildContext context) {
@@ -188,13 +309,20 @@ class SaleTile extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            Expanded(flex: 2, child: Text(nome, style: const TextStyle(fontWeight: FontWeight.w500))),
+            Expanded(
+                flex: 2,
+                child: Text(nome,
+                    style: const TextStyle(fontWeight: FontWeight.w500))),
             Expanded(
               flex: 2,
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 4),
-                decoration: BoxDecoration(color: const Color(0xFFE8D9B5), borderRadius: BorderRadius.circular(12)),
-                child: Text(pagamento, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12)),
+                decoration: BoxDecoration(
+                    color: const Color(0xFFE8D9B5),
+                    borderRadius: BorderRadius.circular(12)),
+                child: Text(pagamento,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 12)),
               ),
             ),
             Expanded(
@@ -202,9 +330,11 @@ class SaleTile extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text('R\$ $valor', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text('R\$ $valor',
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(width: 8),
-                  const Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
+                  const Icon(Icons.delete_outline,
+                      size: 28, color: Color(0xFF6B3E16)),
                 ],
               ),
             ),
@@ -241,4 +371,3 @@ Widget _filterItem({
     ),
   );
 }
-
