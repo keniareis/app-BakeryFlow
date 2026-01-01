@@ -435,34 +435,34 @@ class SaleTile extends StatelessWidget {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
                     'R\$ $valor',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(width: 8),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      size: 28,
-                      color: Color(0xFF6B3E16),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
                     ),
-                    onPressed: () async {
+                  ),
+                  const SizedBox(width: 12),
+                  GestureDetector(
+                    onTap: () async {
                       final confirm = await showDialog<bool>(
                         context: context,
                         builder: (_) => AlertDialog(
                           title: const Text('Excluir venda'),
-                          content: const Text('Deseja realmente excluir esta venda?'),
+                          content:
+                              const Text('Deseja realmente excluir esta venda?'),
                           actions: [
                             TextButton(
-                              onPressed: () => Navigator.pop(context, false),
+                              onPressed: () =>
+                                  Navigator.pop(context, false),
                               child: const Text('Cancelar'),
                             ),
                             TextButton(
-                              onPressed: () => Navigator.pop(context, true),
+                              onPressed: () =>
+                                  Navigator.pop(context, true),
                               child: const Text('Excluir'),
                             ),
                           ],
@@ -473,11 +473,16 @@ class SaleTile extends StatelessWidget {
                         onDelete(id);
                       }
                     },
-
+                    child: const Icon(
+                      Icons.delete_outline,
+                      size: 26,
+                      color: Color(0xFF6B3E16),
+                    ),
                   ),
                 ],
               ),
             ),
+
           ],
         ),
       ),

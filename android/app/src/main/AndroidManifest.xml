@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="sabor_de_casa"
+        android:label="Sabor de casa"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
