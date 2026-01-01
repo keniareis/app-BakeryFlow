@@ -44,24 +44,36 @@ class AppDatabase {
     return await db.insert('sales', sale.toMap());
   }
 
-  Future<List<Sale>> getSalesByDay(DateTime day) async {
-    final db = await database;
+  Future<List<Sale>> getSalesByDay(
+    DateTime date, {
+    String pagamento = 'Todos',
+  }) async {
+    final db = await instance.database;
 
-    final start = DateTime(day.year, day.month, day.day);
+    final start = DateTime(date.year, date.month, date.day);
     final end = start.add(const Duration(days: 1));
+
+    String where = 'data >= ? AND data < ?';
+    List<Object?> whereArgs = [
+      start.millisecondsSinceEpoch,
+      end.millisecondsSinceEpoch,
+    ];
+
+    if (pagamento != 'Todos') {
+      where += ' AND pagamento = ?';
+      whereArgs.add(pagamento);
+    }
 
     final result = await db.query(
       'sales',
-      where: 'data >= ? AND data < ?',
-      whereArgs: [
-        start.millisecondsSinceEpoch,
-        end.millisecondsSinceEpoch,
-      ],
+      where: where,
+      whereArgs: whereArgs,
       orderBy: 'data DESC',
     );
 
     return result.map((e) => Sale.fromMap(e)).toList();
   }
+
 
   Future<void> deleteSale(int id) async {
     final db = await database;

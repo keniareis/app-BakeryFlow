@@ -15,8 +15,6 @@ class _SalesState extends State<Sales> {
 
   final List<Sale> vendas = [];
 
-  double get saldoTotal => vendas.fold(0, (total, sale) => total + sale.valor);
-
   DateTime dataSelecionada = DateTime(
     DateTime.now().year,
     DateTime.now().month,
@@ -47,14 +45,26 @@ class _SalesState extends State<Sales> {
     return DateTime(agora.year, agora.month, agora.day);
   }
 
-  Future<void> _loadSales() async {
-    final result = await AppDatabase.instance.getSalesByDay(dataSelecionada);
+  String formaPagamentoSelecionada = 'Todos';
 
+  double get saldoTotal =>
+    vendas.fold(0, (total, sale) => total + sale.valor);
+
+  Future<void> _loadSales() async {
+    final result = await AppDatabase.instance.getSalesByDay(
+      dataSelecionada,
+      pagamento: formaPagamentoSelecionada,
+    );
     setState(() {
       vendas
         ..clear()
         ..addAll(result);
     });
+  }
+
+  Future<void> _deleteSale(int id) async {
+    await AppDatabase.instance.deleteSale(id);
+    _loadSales();
   }
 
   @override
@@ -147,21 +157,27 @@ class _SalesState extends State<Sales> {
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
-            value: 'Todos',
+            value: formaPagamentoSelecionada,
             isExpanded: true,
             items: const [
               DropdownMenuItem(value: 'Todos', child: Text('Todos')),
               DropdownMenuItem(value: 'Pix', child: Text('Pix')),
               DropdownMenuItem(value: 'Dinheiro', child: Text('Dinheiro')),
             ],
-            onChanged: (value) {},
+            onChanged: (value) {
+              setState(() {
+                formaPagamentoSelecionada = value!;
+              });
+              _loadSales();
+            },
             decoration: InputDecoration(
               filled: true,
               fillColor: const Color(0xFFE8D9B5),
               contentPadding: const EdgeInsets.symmetric(horizontal: 16),
               border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide.none),
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide.none,
+              ),
             ),
           ),
         ],
@@ -211,9 +227,11 @@ class _SalesState extends State<Sales> {
       itemBuilder: (context, index) {
         final sale = vendas[index];
         return SaleTile(
+          id: sale.id!,
           nome: sale.nome,
           pagamento: sale.pagamento,
           valor: sale.valor.toStringAsFixed(2),
+          onDelete: _deleteSale,
         );
       },
     );
@@ -288,15 +306,20 @@ class _SalesState extends State<Sales> {
 }
 
 class SaleTile extends StatelessWidget {
+  final int id;
   final String nome;
   final String pagamento;
   final String valor;
+  final Function(int) onDelete;
 
-  const SaleTile(
-      {super.key,
-      required this.nome,
-      required this.pagamento,
-      required this.valor});
+  const SaleTile({
+    super.key,
+    required this.id,
+    required this.nome,
+    required this.pagamento,
+    required this.valor,
+    required this.onDelete,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -310,19 +333,25 @@ class SaleTile extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-                flex: 2,
-                child: Text(nome,
-                    style: const TextStyle(fontWeight: FontWeight.w500))),
+              flex: 2,
+              child: Text(
+                nome,
+                style: const TextStyle(fontWeight: FontWeight.w500),
+              ),
+            ),
             Expanded(
               flex: 2,
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 decoration: BoxDecoration(
-                    color: const Color(0xFFE8D9B5),
-                    borderRadius: BorderRadius.circular(12)),
-                child: Text(pagamento,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12)),
+                  color: const Color(0xFFE8D9B5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  pagamento,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 12),
+                ),
               ),
             ),
             Expanded(
@@ -330,11 +359,42 @@ class SaleTile extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text('R\$ $valor',
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    'R\$ $valor',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(width: 8),
-                  const Icon(Icons.delete_outline,
-                      size: 28, color: Color(0xFF6B3E16)),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      size: 28,
+                      color: Color(0xFF6B3E16),
+                    ),
+                    onPressed: () async {
+                      final confirm = await showDialog<bool>(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: const Text('Excluir venda'),
+                          content: const Text('Deseja realmente excluir esta venda?'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              child: const Text('Cancelar'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              child: const Text('Excluir'),
+                            ),
+                          ],
+                        ),
+                      );
+
+                      if (confirm == true) {
+                        onDelete(id);
+                      }
+                    },
+
+                  ),
                 ],
               ),
             ),
@@ -344,6 +404,7 @@ class SaleTile extends StatelessWidget {
     );
   }
 }
+
 
 Widget _filterItem({
   required String label,
