@@ -51,16 +51,90 @@ class _SalesState extends State<Sales> {
     vendas.fold(0, (total, sale) => total + sale.valor);
 
   Future<void> _loadSales() async {
-    final result = await AppDatabase.instance.getSalesByDay(
-      dataSelecionada,
-      pagamento: formaPagamentoSelecionada,
-    );
+    List<Sale> result;
+
+    if (filtroSelecionado == 'Dia') {
+      result = await AppDatabase.instance.getSalesByDay(
+        dataSelecionada,
+        pagamento: formaPagamentoSelecionada,
+      );
+    } else if (filtroSelecionado == 'Mês') {
+      result = await AppDatabase.instance.getSalesByMonth(
+        dataSelecionada,
+        pagamento: formaPagamentoSelecionada,
+      );
+    } else {
+      result = await AppDatabase.instance.getSalesByYear(
+        dataSelecionada,
+        pagamento: formaPagamentoSelecionada,
+      );
+    }
+
     setState(() {
       vendas
         ..clear()
         ..addAll(result);
     });
   }
+
+  String get tituloPeriodo {
+    if (filtroSelecionado == 'Dia') {
+      return _formatarData(dataSelecionada);
+    }
+    if (filtroSelecionado == 'Mês') {
+      const meses = [
+        'JAN','FEV','MAR','ABR','MAI','JUN',
+        'JUL','AGO','SET','OUT','NOV','DEZ'
+      ];
+      return '${meses[dataSelecionada.month - 1]} ${dataSelecionada.year}';
+    }
+    return dataSelecionada.year.toString();
+  }
+
+  void _voltarPeriodo() {
+    setState(() {
+      if (filtroSelecionado == 'Dia') {
+        dataSelecionada =
+            dataSelecionada.subtract(const Duration(days: 1));
+      } else if (filtroSelecionado == 'Mês') {
+        dataSelecionada = DateTime(
+          dataSelecionada.year,
+          dataSelecionada.month - 1,
+          1,
+        );
+      } else {
+        dataSelecionada = DateTime(
+          dataSelecionada.year - 1,
+          1,
+          1,
+        );
+      }
+    });
+    _loadSales();
+  }
+
+  void _avancarPeriodo() {
+    setState(() {
+      if (filtroSelecionado == 'Dia') {
+        dataSelecionada =
+            dataSelecionada.add(const Duration(days: 1));
+      } else if (filtroSelecionado == 'Mês') {
+        dataSelecionada = DateTime(
+          dataSelecionada.year,
+          dataSelecionada.month + 1,
+          1,
+        );
+      } else {
+        dataSelecionada = DateTime(
+          dataSelecionada.year + 1,
+          1,
+          1,
+        );
+      }
+    });
+    _loadSales();
+  }
+
 
   Future<void> _deleteSale(int id) async {
     await AppDatabase.instance.deleteSale(id);
@@ -98,41 +172,43 @@ class _SalesState extends State<Sales> {
     );
   }
 
-  // Seus Widgets auxiliares (_dateHeader, _balanceCard, etc) continuam aqui...
-  // (Mantive a lógica que você já tinha, apenas organizei a estrutura)
-
   Widget _dateHeader() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
           icon: const Icon(Icons.chevron_left),
-          onPressed: () {
-            setState(() {
-              dataSelecionada =
-                  dataSelecionada.subtract(const Duration(days: 1));
-            });
-            _loadSales();
-          },
+          onPressed: _voltarPeriodo,
         ),
         Text(
-          _formatarData(dataSelecionada),
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          tituloPeriodo,
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         IconButton(
           icon: const Icon(Icons.chevron_right),
-          onPressed: dataSelecionada.isBefore(hoje)
-              ? () {
-                  setState(() {
-                    dataSelecionada =
-                        dataSelecionada.add(const Duration(days: 1)); 
-                  });
-                  _loadSales();
-                }
-              : null,
+          onPressed: podeAvancar ? _avancarPeriodo : null,
         ),
       ],
     );
+  }
+
+  bool get podeAvancar {
+    if (filtroSelecionado == 'Dia') {
+      return dataSelecionada.isBefore(hoje);
+    }
+
+    if (filtroSelecionado == 'Mês') {
+      final atual = DateTime(hoje.year, hoje.month);
+      final selecionado =
+          DateTime(dataSelecionada.year, dataSelecionada.month);
+      return selecionado.isBefore(atual);
+    }
+
+    // Ano
+    return dataSelecionada.year < hoje.year;
   }
 
   Widget _balanceCard() {
@@ -251,6 +327,7 @@ class _SalesState extends State<Sales> {
             selected: filtroSelecionado == 'Dia',
             onTap: () {
               setState(() => filtroSelecionado = 'Dia');
+              _loadSales();
             },
           ),
           _filterItem(
@@ -258,6 +335,7 @@ class _SalesState extends State<Sales> {
             selected: filtroSelecionado == 'Mês',
             onTap: () {
               setState(() => filtroSelecionado = 'Mês');
+              _loadSales();
             },
           ),
           _filterItem(
@@ -265,8 +343,10 @@ class _SalesState extends State<Sales> {
             selected: filtroSelecionado == 'Ano',
             onTap: () {
               setState(() => filtroSelecionado = 'Ano');
+              _loadSales();
             },
           ),
+
         ],
       ),
     );
@@ -432,3 +512,5 @@ Widget _filterItem({
     ),
   );
 }
+
+

@@ -79,4 +79,64 @@ class AppDatabase {
     final db = await database;
     await db.delete('sales', where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<List<Sale>> getSalesByMonth(
+    DateTime date, {
+    String pagamento = 'Todos',
+  }) async {
+    final db = await database;
+
+    final start = DateTime(date.year, date.month, 1);
+    final end = DateTime(date.year, date.month + 1, 1);
+
+    String where = 'data >= ? AND data < ?';
+    List<Object?> args = [
+      start.millisecondsSinceEpoch,
+      end.millisecondsSinceEpoch,
+    ];
+
+    if (pagamento != 'Todos') {
+      where += ' AND pagamento = ?';
+      args.add(pagamento);
+    }
+
+    final result = await db.query(
+      'sales',
+      where: where,
+      whereArgs: args,
+      orderBy: 'data DESC',
+    );
+
+    return result.map((e) => Sale.fromMap(e)).toList();
+  }
+
+  Future<List<Sale>> getSalesByYear(
+    DateTime date, {
+    String pagamento = 'Todos',
+  }) async {
+    final db = await database;
+
+    final start = DateTime(date.year, 1, 1);
+    final end = DateTime(date.year + 1, 1, 1);
+
+    String where = 'data >= ? AND data < ?';
+    List<Object?> args = [
+      start.millisecondsSinceEpoch,
+      end.millisecondsSinceEpoch,
+    ];
+
+    if (pagamento != 'Todos') {
+      where += ' AND pagamento = ?';
+      args.add(pagamento);
+    }
+
+    final result = await db.query(
+      'sales',
+      where: where,
+      whereArgs: args,
+      orderBy: 'data DESC',
+    );
+
+    return result.map((e) => Sale.fromMap(e)).toList();
+  }
 }
