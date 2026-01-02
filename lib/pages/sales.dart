@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sabor_de_casa/theme/app_theme.dart';
 import '../../widgets/new_sale_modal.dart';
 import '../models/sale_model.dart';
 import '../database/app_database.dart';
@@ -215,7 +216,7 @@ class _SalesState extends State<Sales> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF7E8),
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -228,7 +229,7 @@ class _SalesState extends State<Sales> {
             style: const TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF6B3E16),
+              color: AppColors.primary,
             ),
           ),
           const SizedBox(height: 8),
@@ -249,7 +250,7 @@ class _SalesState extends State<Sales> {
             },
             decoration: InputDecoration(
               filled: true,
-              fillColor: const Color(0xFFE8D9B5),
+              fillColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -266,23 +267,23 @@ class _SalesState extends State<Sales> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       decoration: BoxDecoration(
-          color: const Color(0xFF6B3E16),
+          color: AppColors.primary,
           borderRadius: BorderRadius.circular(12)),
       child: const Row(
         children: [
           Expanded(
               flex: 2,
-              child: Text('Nome', style: TextStyle(color: Colors.white))),
+              child: Text('Nome', style: TextStyle(color: AppColors.background))),
           Expanded(
               flex: 2,
               child: Text('Pagamento',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white))),
+                  style: TextStyle(color: AppColors.background))),
           Expanded(
               flex: 2,
               child: Text('Valor',
                   textAlign: TextAlign.end,
-                  style: TextStyle(color: Colors.white))),
+                  style: TextStyle(color: AppColors.background))),
         ],
       ),
     );
@@ -318,7 +319,7 @@ class _SalesState extends State<Sales> {
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF3DC),
+        color: AppColors.accent,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -358,7 +359,7 @@ class _SalesState extends State<Sales> {
       width: double.infinity,
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF6B3E16),
+          backgroundColor: AppColors.primary,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
@@ -380,7 +381,7 @@ class _SalesState extends State<Sales> {
         },
         icon: const Icon(Icons.add),
         label: const Text('Nova venda',
-            style: TextStyle(fontSize: 18, color: Colors.white)),
+            style: TextStyle(fontSize: 18, color: AppColors.background)),
       ),
     );
   }
@@ -405,7 +406,7 @@ class SaleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: const Color(0xFFFFF7E8),
+      color: AppColors.background,
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.symmetric(vertical: 4),
@@ -425,7 +426,7 @@ class SaleTile extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8D9B5),
+                  color: AppColors.accent,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -477,7 +478,7 @@ class SaleTile extends StatelessWidget {
                     child: const Icon(
                       Icons.delete_outline,
                       size: 26,
-                      color: Color(0xFF6B3E16),
+                      color: AppColors.primary,
                     ),
                   ),
                 ],
@@ -509,7 +510,7 @@ Widget _filterItem({
           label,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: selected ? Colors.white : const Color(0xFF6B3E16),
+            color: selected ? AppColors.background : AppColors.primary,
             fontWeight: FontWeight.w500,
           ),
         ),

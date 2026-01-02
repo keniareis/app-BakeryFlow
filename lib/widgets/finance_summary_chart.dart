@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:sabor_de_casa/theme/app_theme.dart';
 
 class FinanceSummaryChart extends StatelessWidget {
   final double ganhos;
@@ -21,7 +22,7 @@ class FinanceSummaryChart extends StatelessWidget {
     return Container(
   padding: const EdgeInsets.all(12),
   decoration: BoxDecoration(
-    color: const Color(0xFFFFF7E8),
+    color: AppColors.background,
     borderRadius: BorderRadius.circular(16),
   ),
   child: Column(
@@ -76,7 +77,7 @@ class FinanceSummaryChart extends StatelessWidget {
                     toY: ganhos,
                     width: 32,
                     borderRadius: BorderRadius.circular(8),
-                    color: const Color(0xFF6B3E16),
+                    color: AppColors.primary,
                   ),
                 ],
               ),
@@ -87,7 +88,7 @@ class FinanceSummaryChart extends StatelessWidget {
                     toY: gastos,
                     width: 32,
                     borderRadius: BorderRadius.circular(8),
-                    color: Colors.red,
+                    color: AppColors.danger,
                   ),
                 ],
               ),

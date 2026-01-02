@@ -21,7 +21,7 @@ class AppDatabase {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -60,7 +60,14 @@ class AppDatabase {
         )
       ''');
     }
+
+    if (oldVersion < 3) {
+      await db.rawUpdate(
+        "UPDATE sales SET pagamento = 'Cartao' WHERE pagamento = 'Cartão'"
+      );
+    }
   }
+
 
 
   Future<int> insertSale(Sale sale) async {
@@ -252,67 +259,67 @@ class AppDatabase {
 
   // ===================== GANHOS (SOMA) =====================
 
-  Future<double> getTotalSalesByDay(DateTime date) async {
-    final db = await database;
+Future<double> getTotalSalesByDay(DateTime date) async {
+  final db = await database;
 
-    final start = DateTime(date.year, date.month, date.day);
-    final end = start.add(const Duration(days: 1));
+  final start = DateTime(date.year, date.month, date.day);
+  final end = start.add(const Duration(days: 1));
 
-    final result = await db.rawQuery(
-      '''
-      SELECT SUM(valor) as total
-      FROM sales
-      WHERE data >= ? AND data < ?
-      ''',
-      [
-        start.millisecondsSinceEpoch,
-        end.millisecondsSinceEpoch,
-      ],
-    );
+  final result = await db.rawQuery(
+    '''
+    SELECT SUM(valor) as total
+    FROM sales
+    WHERE data >= ? AND data < ?
+    ''',
+    [
+      start.millisecondsSinceEpoch,
+      end.millisecondsSinceEpoch,
+    ],
+  );
 
-    return (result.first['total'] as double?) ?? 0.0;
-  }
+  return (result.first['total'] as double?) ?? 0.0;
+}
 
-  Future<double> getTotalSalesByMonth(DateTime date) async {
-    final db = await database;
+Future<double> getTotalSalesByMonth(DateTime date) async {
+  final db = await database;
 
-    final start = DateTime(date.year, date.month, 1);
-    final end = DateTime(date.year, date.month + 1, 1);
+  final start = DateTime(date.year, date.month, 1);
+  final end = DateTime(date.year, date.month + 1, 1);
 
-    final result = await db.rawQuery(
-      '''
-      SELECT SUM(valor) as total
-      FROM sales
-      WHERE data >= ? AND data < ?
-      ''',
-      [
-        start.millisecondsSinceEpoch,
-        end.millisecondsSinceEpoch,
-      ],
-    );
+  final result = await db.rawQuery(
+    '''
+    SELECT SUM(valor) as total
+    FROM sales
+    WHERE data >= ? AND data < ?
+    ''',
+    [
+      start.millisecondsSinceEpoch,
+      end.millisecondsSinceEpoch,
+    ],
+  );
 
-    return (result.first['total'] as double?) ?? 0.0;
-  }
+  return (result.first['total'] as double?) ?? 0.0;
+}
 
-  Future<double> getTotalSalesByYear(DateTime date) async {
-    final db = await database;
+Future<double> getTotalSalesByYear(DateTime date) async {
+  final db = await database;
 
-    final start = DateTime(date.year, 1, 1);
-    final end = DateTime(date.year + 1, 1, 1);
+  final start = DateTime(date.year, 1, 1);
+  final end = DateTime(date.year + 1, 1, 1);
 
-    final result = await db.rawQuery(
-      '''
-      SELECT SUM(valor) as total
-      FROM sales
-      WHERE data >= ? AND data < ?
-      ''',
-      [
-        start.millisecondsSinceEpoch,
-        end.millisecondsSinceEpoch,
-      ],
-    );
+  final result = await db.rawQuery(
+    '''
+    SELECT SUM(valor) as total
+    FROM sales
+    WHERE data >= ? AND data < ?
+    ''',
+    [
+      start.millisecondsSinceEpoch,
+      end.millisecondsSinceEpoch,
+    ],
+  );
 
-    return (result.first['total'] as double?) ?? 0.0;
-  }
+  return (result.first['total'] as double?) ?? 0.0;
+}
 
 }

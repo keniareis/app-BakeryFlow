@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sabor_de_casa/theme/app_theme.dart';
 import '../models/expense_model.dart';
 
 class NewExpenseModal extends StatefulWidget {
@@ -60,7 +61,7 @@ class _NewExpenseModalState extends State<NewExpenseModal> {
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: const BoxDecoration(
-            color: Color(0xFFFFF3DC),
+            color: AppColors.background,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(24),
             ),
@@ -73,7 +74,7 @@ class _NewExpenseModalState extends State<NewExpenseModal> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF6B3E16),
+                  color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: 20),
@@ -92,7 +93,7 @@ class _NewExpenseModalState extends State<NewExpenseModal> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6B3E16),
+                    backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
@@ -101,7 +102,7 @@ class _NewExpenseModalState extends State<NewExpenseModal> {
                   onPressed: _salvar,
                   child: const Text(
                     'Salvar',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    style: TextStyle(fontSize: 18, color: AppColors.background),
                   ),
                 ),
               ),
@@ -123,7 +124,7 @@ class _NewExpenseModalState extends State<NewExpenseModal> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: const Color(0xFFE8D9B5),
+        fillColor: AppColors.accent,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,

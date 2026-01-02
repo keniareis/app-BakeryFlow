@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sabor_de_casa/theme/app_theme.dart';
 import '../models/sale_model.dart';
 
 class NewSaleModal extends StatefulWidget {
@@ -61,7 +62,7 @@ class _NewSaleModalState extends State<NewSaleModal> {
         child: Container(
           padding: const EdgeInsets.all(20),
           decoration: const BoxDecoration(
-            color: Color(0xFFFFF3DC),
+            color: AppColors.background,
             borderRadius: BorderRadius.vertical(
               top: Radius.circular(24),
             ),
@@ -74,7 +75,7 @@ class _NewSaleModalState extends State<NewSaleModal> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF6B3E16),
+                  color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: 20),
@@ -96,7 +97,7 @@ class _NewSaleModalState extends State<NewSaleModal> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF6B3E16),
+                    backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
@@ -105,7 +106,7 @@ class _NewSaleModalState extends State<NewSaleModal> {
                   onPressed: _salvar,
                   child: const Text(
                     'Salvar',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    style: TextStyle(fontSize: 18, color: AppColors.background),
                   ),
                 ),
               ),
@@ -128,7 +129,7 @@ class _NewSaleModalState extends State<NewSaleModal> {
       decoration: InputDecoration(
         labelText: label,
         filled: true,
-        fillColor: const Color(0xFFE8D9B5),
+        fillColor: AppColors.accent,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
@@ -143,7 +144,7 @@ class _NewSaleModalState extends State<NewSaleModal> {
       items: const [
         DropdownMenuItem(value: 'Pix', child: Text('Pix')),
         DropdownMenuItem(value: 'Dinheiro', child: Text('Dinheiro')),
-        DropdownMenuItem(value: 'Cartão', child: Text('Cartão')),
+        DropdownMenuItem(value: 'Cartao', child: Text('Cartão')),
       ],
       onChanged: (value) {
         if (value != null) {
@@ -152,7 +153,7 @@ class _NewSaleModalState extends State<NewSaleModal> {
       },
       decoration: InputDecoration(
         filled: true,
-        fillColor: const Color(0xFFE8D9B5),
+        fillColor: AppColors.accent,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sabor_de_casa/theme/app_theme.dart';
 import '../../widgets/new_expense_modal.dart';
 import '../models/expense_model.dart';
 import '../database/app_database.dart';
@@ -167,7 +168,7 @@ class _ExpensesState extends State<Expenses> {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFFFFF7E8),
+          color: AppColors.background,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -180,7 +181,7 @@ class _ExpensesState extends State<Expenses> {
               style: const TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
-                color: Colors.red,
+                color: AppColors.danger,
               ),
             ),
           ],
@@ -198,9 +199,9 @@ class _ExpensesState extends State<Expenses> {
       ),
       child: const Row(
         children: [
-          Expanded(flex: 2, child: Text('Nome', style: TextStyle(color: Colors.white))),
-          Expanded(flex: 2, child: Text('Pagamento', textAlign: TextAlign.center, style: TextStyle(color: Colors.white))),
-          Expanded(flex: 2, child: Text('Valor', textAlign: TextAlign.end, style: TextStyle(color: Colors.white))),
+          Expanded(flex: 2, child: Text('Nome', style: TextStyle(color: AppColors.background))),
+          Expanded(flex: 2, child: Text('Pagamento', textAlign: TextAlign.center, style: TextStyle(color: AppColors.background))),
+          Expanded(flex: 2, child: Text('Valor', textAlign: TextAlign.end, style: TextStyle(color: AppColors.background))),
         ],
       ),
     );
@@ -229,7 +230,7 @@ class _ExpensesState extends State<Expenses> {
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF3DC),
+        color: AppColors.accent,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -261,7 +262,7 @@ class _ExpensesState extends State<Expenses> {
       width: double.infinity,
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red,
+          backgroundColor: AppColors.danger,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
@@ -307,7 +308,7 @@ class ExpenseTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: const Color(0xFFFFF7E8),
+      color: AppColors.background,
       elevation: 0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.symmetric(vertical: 4),
@@ -331,7 +332,7 @@ class ExpenseTile extends StatelessWidget {
                     'R\$ $value',
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
-                      color: Colors.red,
+                      color: AppColors.danger,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -365,7 +366,7 @@ class ExpenseTile extends StatelessWidget {
                     child: const Icon(
                       Icons.delete_outline,
                       size: 26,
-                      color: Colors.red,
+                      color: AppColors.danger,
                     ),
                   ),
                 ],
@@ -389,14 +390,14 @@ Widget _filterItem({
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFF6B3E16) : Colors.transparent,
+          color: selected ? AppColors.primary : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Text(
           label,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: selected ? Colors.white : const Color(0xFF6B3E16),
+            color: selected ? Colors.white : AppColors.primary,
             fontWeight: FontWeight.w500,
           ),
         ),
