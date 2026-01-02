@@ -1,6 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/sale_model.dart';
+import '../models/expense_model.dart';
 
 class AppDatabase {
   AppDatabase._();
@@ -20,8 +21,9 @@ class AppDatabase {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -35,9 +37,31 @@ class AppDatabase {
         data INTEGER NOT NULL
       )
     ''');
+
+    // TABELA DE DESPESAS
+    await db.execute('''
+      CREATE TABLE expenses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        description TEXT NOT NULL,
+        value REAL NOT NULL,
+        date INTEGER NOT NULL
+      )
+    ''');
   }
 
-  // ================= CRUD =================
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('''
+        CREATE TABLE expenses (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          description TEXT NOT NULL,
+          value REAL NOT NULL,
+          date INTEGER NOT NULL
+        )
+      ''');
+    }
+  }
+
 
   Future<int> insertSale(Sale sale) async {
     final db = await database;
@@ -139,4 +163,156 @@ class AppDatabase {
 
     return result.map((e) => Sale.fromMap(e)).toList();
   }
+
+
+  //expenses
+  // INSERIR DESPESA
+  Future<int> insertExpense(Expense expense) async {
+    final db = await instance.database;
+    return await db.insert('expenses', expense.toMap());
+  }
+
+  // LISTAR DESPESAS
+  Future<List<Expense>> getExpenses() async {
+    final db = await instance.database;
+    final result = await db.query(
+      'expenses',
+      orderBy: 'date DESC',
+    );
+
+    return result.map((e) => Expense.fromMap(e)).toList();
+  }
+
+  // DELETAR DESPESA
+  Future<int> deleteExpense(int id) async {
+    final db = await instance.database;
+    return await db.delete(
+      'expenses',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<List<Expense>> getExpensesByDay(DateTime date) async {
+    final db = await database;
+
+    final start = DateTime(date.year, date.month, date.day);
+    final end = start.add(const Duration(days: 1));
+
+    final result = await db.query(
+      'expenses',
+      where: 'date >= ? AND date < ?',
+      whereArgs: [
+        start.millisecondsSinceEpoch,
+        end.millisecondsSinceEpoch,
+      ],
+      orderBy: 'date DESC',
+    );
+
+    return result.map((e) => Expense.fromMap(e)).toList();
+  }
+
+  Future<List<Expense>> getExpensesByMonth(DateTime date) async {
+    final db = await database;
+
+    final start = DateTime(date.year, date.month, 1);
+    final end = DateTime(date.year, date.month + 1, 1);
+
+    final result = await db.query(
+      'expenses',
+      where: 'date >= ? AND date < ?',
+      whereArgs: [
+        start.millisecondsSinceEpoch,
+        end.millisecondsSinceEpoch,
+      ],
+      orderBy: 'date DESC',
+    );
+
+    return result.map((e) => Expense.fromMap(e)).toList();
+  }
+
+  Future<List<Expense>> getExpensesByYear(DateTime date) async {
+    final db = await database;
+
+    final start = DateTime(date.year, 1, 1);
+    final end = DateTime(date.year + 1, 1, 1);
+
+    final result = await db.query(
+      'expenses',
+      where: 'date >= ? AND date < ?',
+      whereArgs: [
+        start.millisecondsSinceEpoch,
+        end.millisecondsSinceEpoch,
+      ],
+      orderBy: 'date DESC',
+    );
+
+    return result.map((e) => Expense.fromMap(e)).toList();
+  }
+
+  // ===================== GANHOS (SOMA) =====================
+
+  Future<double> getTotalSalesByDay(DateTime date) async {
+    final db = await database;
+
+    final start = DateTime(date.year, date.month, date.day);
+    final end = start.add(const Duration(days: 1));
+
+    final result = await db.rawQuery(
+      '''
+      SELECT SUM(valor) as total
+      FROM sales
+      WHERE data >= ? AND data < ?
+      ''',
+      [
+        start.millisecondsSinceEpoch,
+        end.millisecondsSinceEpoch,
+      ],
+    );
+
+    return (result.first['total'] as double?) ?? 0.0;
+  }
+
+  Future<double> getTotalSalesByMonth(DateTime date) async {
+    final db = await database;
+
+    final start = DateTime(date.year, date.month, 1);
+    final end = DateTime(date.year, date.month + 1, 1);
+
+    final result = await db.rawQuery(
+      '''
+      SELECT SUM(valor) as total
+      FROM sales
+      WHERE data >= ? AND data < ?
+      ''',
+      [
+        start.millisecondsSinceEpoch,
+        end.millisecondsSinceEpoch,
+      ],
+    );
+
+    return (result.first['total'] as double?) ?? 0.0;
+  }
+
+  Future<double> getTotalSalesByYear(DateTime date) async {
+    final db = await database;
+
+    final start = DateTime(date.year, 1, 1);
+    final end = DateTime(date.year + 1, 1, 1);
+
+    final result = await db.rawQuery(
+      '''
+      SELECT SUM(valor) as total
+      FROM sales
+      WHERE data >= ? AND data < ?
+      ''',
+      [
+        start.millisecondsSinceEpoch,
+        end.millisecondsSinceEpoch,
+      ],
+    );
+
+    return (result.first['total'] as double?) ?? 0.0;
+  }
+
 }

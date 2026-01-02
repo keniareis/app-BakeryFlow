@@ -239,6 +239,7 @@ class _SalesState extends State<Sales> {
               DropdownMenuItem(value: 'Todos', child: Text('Todos')),
               DropdownMenuItem(value: 'Pix', child: Text('Pix')),
               DropdownMenuItem(value: 'Dinheiro', child: Text('Dinheiro')),
+              DropdownMenuItem(value: 'Cartao', child: Text('Cartão')),
             ],
             onChanged: (value) {
               setState(() {
@@ -489,7 +490,6 @@ class SaleTile extends StatelessWidget {
     );
   }
 }
-
 
 Widget _filterItem({
   required String label,

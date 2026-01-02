@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sabor_de_casa/pages/sales.dart';
-// import 'pages/expenses_page.dart';
-
+import 'package:sabor_de_casa/pages/expenses.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -38,8 +37,8 @@ class _MainPageState extends State<MainPage> {
 
   // Lista de páginas que serão exibidas
   final List<Widget> _pages = [
-    const Sales(),    // Certifique-se que esta classe existe abaixo ou em outro arquivo
-    const Expenses(), // Certifique-se que esta classe existe abaixo ou em outro arquivo
+    const Sales(),    
+    const Expenses(), 
   ];
 
   @override
@@ -71,15 +70,5 @@ class _MainPageState extends State<MainPage> {
         ],
       ),
     );
-  }
-}
-
-
-// --- CLASSE EXPENSES (Resumo para teste) ---
-class Expenses extends StatelessWidget {
-  const Expenses({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("Conteúdo de Despesas aqui"));
   }
 }
