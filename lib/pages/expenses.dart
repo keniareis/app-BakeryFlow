@@ -32,14 +32,23 @@ class _ExpensesState extends State<Expenses> {
     return DateTime(agora.year, agora.month, agora.day);
   }
 
-  double get totalDespesas =>
-      despesas.fold(0, (total, e) => total + e.value);
+  double get totalDespesas => despesas.fold(0, (total, e) => total + e.value);
 
   String get tituloPeriodo {
     if (filtroSelecionado == 'Mês') {
       const meses = [
-        'JAN','FEV','MAR','ABR','MAI','JUN',
-        'JUL','AGO','SET','OUT','NOV','DEZ'
+        'JAN',
+        'FEV',
+        'MAR',
+        'ABR',
+        'MAI',
+        'JUN',
+        'JUL',
+        'AGO',
+        'SET',
+        'OUT',
+        'NOV',
+        'DEZ'
       ];
       return '${meses[dataSelecionada.month - 1]} ${dataSelecionada.year}';
     }
@@ -52,7 +61,7 @@ class _ExpensesState extends State<Expenses> {
     List<Expense> result;
     double totalGanhos;
 
-     if (filtroSelecionado == 'Mês') {
+    if (filtroSelecionado == 'Mês') {
       result = await AppDatabase.instance.getExpensesByMonth(dataSelecionada);
       totalGanhos =
           await AppDatabase.instance.getTotalSalesByMonth(dataSelecionada);
@@ -69,7 +78,6 @@ class _ExpensesState extends State<Expenses> {
       ganhos = totalGanhos;
     });
   }
-
 
   Future<void> _deleteExpense(int id) async {
     await AppDatabase.instance.deleteExpense(id);
@@ -94,8 +102,6 @@ class _ExpensesState extends State<Expenses> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _dateHeader(),
-            const SizedBox(height: 16),
             FinanceSummaryChart(
               ganhos: ganhos,
               gastos: totalDespesas,
@@ -108,6 +114,8 @@ class _ExpensesState extends State<Expenses> {
             Expanded(child: _expensesList()),
             const SizedBox(height: 12),
             _bottomFilter(),
+            const SizedBox(height: 12),
+            _dateHeader(),
             const SizedBox(height: 12),
             _newExpenseButton(),
           ],
@@ -142,8 +150,7 @@ class _ExpensesState extends State<Expenses> {
         dataSelecionada =
             DateTime(dataSelecionada.year, dataSelecionada.month - 1, 1);
       } else {
-        dataSelecionada =
-            DateTime(dataSelecionada.year - 1, 1, 1);
+        dataSelecionada = DateTime(dataSelecionada.year - 1, 1, 1);
       }
     });
     _loadExpenses();
@@ -155,8 +162,7 @@ class _ExpensesState extends State<Expenses> {
         dataSelecionada =
             DateTime(dataSelecionada.year, dataSelecionada.month + 1, 1);
       } else {
-        dataSelecionada =
-            DateTime(dataSelecionada.year + 1, 1, 1);
+        dataSelecionada = DateTime(dataSelecionada.year + 1, 1, 1);
       }
     });
     _loadExpenses();
@@ -164,30 +170,29 @@ class _ExpensesState extends State<Expenses> {
 
   Widget _totalCard() {
     return SizedBox(
-      width: double.infinity,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.background,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          children: [
-            const Text('Total de despesas',
-                style: TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 8),
-            Text(
-              'R\$ ${totalDespesas.toStringAsFixed(2)}',
-              style: const TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: AppColors.danger,
+        width: double.infinity,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: AppColors.background,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            children: [
+              const Text('Total de despesas',
+                  style: TextStyle(fontWeight: FontWeight.w500)),
+              const SizedBox(height: 8),
+              Text(
+                'R\$ ${totalDespesas.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.danger,
+                ),
               ),
-            ),
-          ],
-        ),
-      )
-    );
+            ],
+          ),
+        ));
   }
 
   Widget _tableHeader() {
@@ -199,9 +204,20 @@ class _ExpensesState extends State<Expenses> {
       ),
       child: const Row(
         children: [
-          Expanded(flex: 2, child: Text('Nome', style: TextStyle(color: AppColors.background))),
-          Expanded(flex: 2, child: Text('Pagamento', textAlign: TextAlign.center, style: TextStyle(color: AppColors.background))),
-          Expanded(flex: 2, child: Text('Valor', textAlign: TextAlign.end, style: TextStyle(color: AppColors.background))),
+          Expanded(
+              flex: 2,
+              child:
+                  Text('Nome', style: TextStyle(color: AppColors.background))),
+          Expanded(
+              flex: 2,
+              child: Text('Pagamento',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.background))),
+          Expanded(
+              flex: 2,
+              child: Text('Valor',
+                  textAlign: TextAlign.end,
+                  style: TextStyle(color: AppColors.background))),
         ],
       ),
     );
@@ -251,7 +267,6 @@ class _ExpensesState extends State<Expenses> {
               _loadExpenses();
             },
           ),
-
         ],
       ),
     );
@@ -346,13 +361,11 @@ class ExpenseTile extends StatelessWidget {
                               'Deseja realmente excluir esta despesa?'),
                           actions: [
                             TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(context, false),
+                              onPressed: () => Navigator.pop(context, false),
                               child: const Text('Cancelar'),
                             ),
                             TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(context, true),
+                              onPressed: () => Navigator.pop(context, true),
                               child: const Text('Excluir'),
                             ),
                           ],
