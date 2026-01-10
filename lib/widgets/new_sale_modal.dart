@@ -79,20 +79,16 @@ class _NewSaleModalState extends State<NewSaleModal> {
                 ),
               ),
               const SizedBox(height: 20),
-
               _input(_nomeController, 'Nome'),
               const SizedBox(height: 12),
-
               _input(
                 _valorController,
                 'Valor (R\$)',
                 isNumber: true,
               ),
               const SizedBox(height: 12),
-
               _pagamento(),
               const SizedBox(height: 20),
-
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -124,8 +120,7 @@ class _NewSaleModalState extends State<NewSaleModal> {
   }) {
     return TextField(
       controller: controller,
-      keyboardType:
-          isNumber ? TextInputType.number : TextInputType.text,
+      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
       decoration: InputDecoration(
         labelText: label,
         filled: true,
@@ -140,7 +135,7 @@ class _NewSaleModalState extends State<NewSaleModal> {
 
   Widget _pagamento() {
     return DropdownButtonFormField<String>(
-      value: pagamentoSelecionado,
+      initialValue: pagamentoSelecionado,
       items: const [
         DropdownMenuItem(value: 'Pix', child: Text('Pix')),
         DropdownMenuItem(value: 'Dinheiro', child: Text('Dinheiro')),

@@ -18,10 +18,8 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# VS Code related
+.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -32,14 +30,65 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+pubspec.lock
 
-# Symbolication related
-app.*.symbols
-
-# Obfuscation related
-app.*.map.json
-
-# Android Studio will place build artifacts here
+# Android related
+**/android/**/gradle-wrapper.jar
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/generated/
+**/android/**/gradle/
+**/android/**/platform/
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# iOS related
+**/ios/**/*.mode1v3
+**/ios/**/*.mode2v3
+**/ios/**/*.moved-aside
+**/ios/**/*.pbuser
+**/ios/**/*.perspectivev3
+**/ios/**/*sync/
+**/ios/**/.xcode.env.local
+**/ios/**/derivedData/
+**/ios/**/flutter_assets/
+**/ios/**/ios/Flutter/App.framework
+**/ios/**/ios/Flutter/Flutter.framework
+**/ios/**/ios/Flutter/Generated.xcconfig
+**/ios/**/ios/Flutter/app.flx
+**/ios/**/ios/Flutter/app.zip
+**/ios/**/ios/Flutter/flutter_assets/
+**/ios/**/ios/ServiceDefinitions.json
+**/ios/**/runner/runner.xcodeproj/project.xcworkspace/
+**/ios/**/runner/runner.xcodeproj/xcuserdata/
+**/ios/**/runner/runner.xcworkspace/
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/ServiceDefinitions.json
+**/ios/runner/runner.xcodeproj/project.xcworkspace/
+**/ios/runner/runner.xcodeproj/xcuserdata/
+**/ios/runner/runner.xcworkspace/
+
+# Symbols and Obfuscation
+app.*.symbols
+app.*.map.json
+
+# Environment variables
+.env
+.env.*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Cleanup accidental npm init
+
