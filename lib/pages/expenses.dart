@@ -102,6 +102,8 @@ class _ExpensesState extends State<Expenses> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            _dateHeader(),
+            const SizedBox(height: 16),
             FinanceSummaryChart(
               ganhos: ganhos,
               gastos: totalDespesas,
@@ -114,8 +116,6 @@ class _ExpensesState extends State<Expenses> {
             Expanded(child: _expensesList()),
             const SizedBox(height: 12),
             _bottomFilter(),
-            const SizedBox(height: 12),
-            _dateHeader(),
             const SizedBox(height: 12),
             _newExpenseButton(),
           ],

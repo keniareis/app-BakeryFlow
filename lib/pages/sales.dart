@@ -162,6 +162,8 @@ class _SalesState extends State<Sales> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
+            _dateHeader(),
+            const SizedBox(height: 16),
             _balanceCard(),
             const SizedBox(height: 16),
             _tableHeader(),
@@ -169,8 +171,6 @@ class _SalesState extends State<Sales> {
             Expanded(child: _salesList()),
             const SizedBox(height: 12),
             _bottomFilter(),
-            const SizedBox(height: 12),
-            _dateHeader(),
             const SizedBox(height: 12),
             _newSaleButton(),
           ],
