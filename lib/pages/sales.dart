@@ -21,7 +21,7 @@ class _SalesState extends State<Sales> {
     DateTime.now().month,
     DateTime.now().day,
   );
-  
+
   String _formatarData(DateTime data) {
     const meses = [
       'JAN',
@@ -48,8 +48,7 @@ class _SalesState extends State<Sales> {
 
   String formaPagamentoSelecionada = 'Todos';
 
-  double get saldoTotal =>
-    vendas.fold(0, (total, sale) => total + sale.valor);
+  double get saldoTotal => vendas.fold(0, (total, sale) => total + sale.valor);
 
   Future<void> _loadSales() async {
     List<Sale> result;
@@ -84,8 +83,18 @@ class _SalesState extends State<Sales> {
     }
     if (filtroSelecionado == 'Mês') {
       const meses = [
-        'JAN','FEV','MAR','ABR','MAI','JUN',
-        'JUL','AGO','SET','OUT','NOV','DEZ'
+        'JAN',
+        'FEV',
+        'MAR',
+        'ABR',
+        'MAI',
+        'JUN',
+        'JUL',
+        'AGO',
+        'SET',
+        'OUT',
+        'NOV',
+        'DEZ'
       ];
       return '${meses[dataSelecionada.month - 1]} ${dataSelecionada.year}';
     }
@@ -95,8 +104,7 @@ class _SalesState extends State<Sales> {
   void _voltarPeriodo() {
     setState(() {
       if (filtroSelecionado == 'Dia') {
-        dataSelecionada =
-            dataSelecionada.subtract(const Duration(days: 1));
+        dataSelecionada = dataSelecionada.subtract(const Duration(days: 1));
       } else if (filtroSelecionado == 'Mês') {
         dataSelecionada = DateTime(
           dataSelecionada.year,
@@ -117,8 +125,7 @@ class _SalesState extends State<Sales> {
   void _avancarPeriodo() {
     setState(() {
       if (filtroSelecionado == 'Dia') {
-        dataSelecionada =
-            dataSelecionada.add(const Duration(days: 1));
+        dataSelecionada = dataSelecionada.add(const Duration(days: 1));
       } else if (filtroSelecionado == 'Mês') {
         dataSelecionada = DateTime(
           dataSelecionada.year,
@@ -135,7 +142,6 @@ class _SalesState extends State<Sales> {
     });
     _loadSales();
   }
-
 
   Future<void> _deleteSale(int id) async {
     await AppDatabase.instance.deleteSale(id);
@@ -203,8 +209,7 @@ class _SalesState extends State<Sales> {
 
     if (filtroSelecionado == 'Mês') {
       final atual = DateTime(hoje.year, hoje.month);
-      final selecionado =
-          DateTime(dataSelecionada.year, dataSelecionada.month);
+      final selecionado = DateTime(dataSelecionada.year, dataSelecionada.month);
       return selecionado.isBefore(atual);
     }
 
@@ -234,7 +239,7 @@ class _SalesState extends State<Sales> {
           ),
           const SizedBox(height: 8),
           DropdownButtonFormField<String>(
-            value: formaPagamentoSelecionada,
+            initialValue: formaPagamentoSelecionada,
             isExpanded: true,
             items: const [
               DropdownMenuItem(value: 'Todos', child: Text('Todos')),
@@ -267,13 +272,13 @@ class _SalesState extends State<Sales> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
       decoration: BoxDecoration(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.circular(12)),
+          color: AppColors.primary, borderRadius: BorderRadius.circular(12)),
       child: const Row(
         children: [
           Expanded(
               flex: 2,
-              child: Text('Nome', style: TextStyle(color: AppColors.background))),
+              child:
+                  Text('Nome', style: TextStyle(color: AppColors.background))),
           Expanded(
               flex: 2,
               child: Text('Pagamento',
@@ -348,7 +353,6 @@ class _SalesState extends State<Sales> {
               _loadSales();
             },
           ),
-
         ],
       ),
     );
@@ -454,17 +458,15 @@ class SaleTile extends StatelessWidget {
                         context: context,
                         builder: (_) => AlertDialog(
                           title: const Text('Excluir venda'),
-                          content:
-                              const Text('Deseja realmente excluir esta venda?'),
+                          content: const Text(
+                              'Deseja realmente excluir esta venda?'),
                           actions: [
                             TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(context, false),
+                              onPressed: () => Navigator.pop(context, false),
                               child: const Text('Cancelar'),
                             ),
                             TextButton(
-                              onPressed: () =>
-                                  Navigator.pop(context, true),
+                              onPressed: () => Navigator.pop(context, true),
                               child: const Text('Excluir'),
                             ),
                           ],
@@ -484,7 +486,6 @@ class SaleTile extends StatelessWidget {
                 ],
               ),
             ),
-
           ],
         ),
       ),
@@ -518,5 +519,3 @@ Widget _filterItem({
     ),
   );
 }
-
-
